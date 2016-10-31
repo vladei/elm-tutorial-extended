@@ -4,15 +4,21 @@ import Http
 import Json.Encode as Encode
 import Json.Decode as Decode exposing ((:=))
 import Task exposing (..)
-import Players.Models exposing (PlayerId, Player, Players)
+
+import Players.Models exposing (PlayerId, Player, Players, NewPlayer)
 import Players.Messages exposing (..)
+
+
+create : NewPlayer -> Cmd Msg
+create newPlayer =
+    createOnServer newPlayer
+        |> Task.perform CreateNewPlayerFail CreateNewPlayerSuccess
 
 
 fetchAll : Cmd Msg
 fetchAll =
     Http.get collectionDecoder fetchAllUrl
         |> Task.perform FetchAllFail FetchAllDone
-
 
 save : Player -> Cmd Msg
 save player =
@@ -24,6 +30,24 @@ delete : Player -> Cmd Msg
 delete player =
     deleteSingle player
         |> Task.perform DeleteFail DeleteSuccess
+
+createOnServer : NewPlayer -> Task.Task Http.Error Player
+createOnServer newPlayer =
+    let
+        body =
+            newPlayerEncoder newPlayer
+                |> Encode.encode 0
+                |> Http.string
+
+        config =
+            { verb = "POST"
+            , headers = [ ( "Content-Type", "application/json" ) ]
+            , url = fetchAllUrl
+            , body = body
+            }
+    in
+        Http.send Http.defaultSettings config
+            |> Http.fromJson memberDecoder
 
 
 fetchSingle : Player -> Task.Task Http.Error Player
@@ -72,6 +96,17 @@ signlePlayerUrl playerId =
 collectionDecoder : Decode.Decoder Players
 collectionDecoder =
     Decode.list memberDecoder
+
+newPlayerEncoder : NewPlayer -> Encode.Value
+newPlayerEncoder player =
+    let
+        list =
+            [ ( "name", Encode.string player.name )
+            , ( "level", Encode.int player.level )
+            ]
+    in
+        list
+            |> Encode.object
 
 
 memberEncoder : Player -> Encode.Value

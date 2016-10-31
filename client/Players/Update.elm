@@ -2,43 +2,66 @@ module Players.Update exposing (..)
 
 import Navigation
 import Players.Messages exposing (Msg(..))
-import Players.Models exposing (Player, PlayerId, Players)
-import Players.Commands exposing (save, delete)
+import Players.Models exposing (Player, PlayerId, Players, NewPlayer, generateNewPlayer)
+import Players.Commands exposing (save, delete, create)
 
 
-update : Msg -> Players -> ( Players, Cmd Msg )
-update msg players =
+update : Msg -> Players -> NewPlayer -> ( Players, NewPlayer, Cmd Msg )
+update msg players newPlayer =
     case msg of
         FetchAllDone newPlayers ->
-            ( newPlayers, Cmd.none )
+            (  newPlayers, newPlayer, Cmd.none )
 
         FetchAllFail error ->
-            ( players, Cmd.none )
+            ( players, newPlayer, Cmd.none )
 
         ChangeLevel id howMuch ->
-            ( players, changeLevelCommands id howMuch players |> Cmd.batch )
+            ( players, newPlayer, changeLevelCommands id howMuch players |> Cmd.batch )
 
         SaveSuccess updatedPlayer ->
-            ( updatePlayer updatedPlayer players, Cmd.none )
+            ( updatePlayer updatedPlayer players, newPlayer, Cmd.none )
 
         SaveFail err ->
-            ( players, Cmd.none )
+            ( players, newPlayer, Cmd.none )
 
         ShowPlayers ->
-            ( players, Navigation.newUrl "#players" )
+            ( players, newPlayer, Navigation.newUrl "#players" )
 
         ShowPlayer playerId ->
-            ( players, Navigation.newUrl ("#players/" ++ (toString playerId)) )
+            ( players, newPlayer, Navigation.newUrl ("#players/" ++ (toString playerId)) )
 
         DeletePlayer id ->
-            ( players, deletePlayerCommands id players |> Cmd.batch )
+            ( players, newPlayer, deletePlayerCommands id players |> Cmd.batch )
 
         DeleteFail err ->
-            ( players, Cmd.none )
+            ( players, newPlayer, Cmd.none )
 
         DeleteSuccess id ->
-            ( removePlayer id players, Cmd.none )
+            ( removePlayer id players, newPlayer, Cmd.none )
 
+        CreatePlayerForm ->
+            (players, newPlayer, Navigation.newUrl "#player/new" )        
+
+        UpdateNewPlayer newNameValue ->
+            (players, {newPlayer | name = newNameValue } , Cmd.none )
+
+        CreateNewPlayer ->
+            (players, newPlayer, saveNewPlayerCommand newPlayer)
+        
+        CreateNewPlayerSuccess newPlayer ->
+            (addNewPlayerToList newPlayer players, generateNewPlayer, Cmd.none)
+        
+        CreateNewPlayerFail err ->
+            (players, newPlayer, Cmd.none)
+
+addNewPlayerToList : Player -> Players ->Players
+addNewPlayerToList newPlayer players =  
+    newPlayer :: players
+
+
+saveNewPlayerCommand : NewPlayer -> Cmd Msg
+saveNewPlayerCommand newPlayer =
+    create newPlayer
 
 changeLevelCommands : PlayerId -> Int -> Players -> List (Cmd Msg)
 changeLevelCommands playerId levelToAdd players =
@@ -78,8 +101,8 @@ deletePlayerCommands playerId players =
 
 removePlayer : PlayerId -> Players -> Players
 removePlayer playerId players =
-  let
-    removePlayerIfMatch player = 
-        player.id /= playerId 
-  in
-    List.filter removePlayerIfMatch players
+    let
+        removePlayerIfMatch player =
+            player.id /= playerId
+    in
+        List.filter removePlayerIfMatch players

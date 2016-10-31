@@ -15,3 +15,9 @@ type Msg
   | DeletePlayer PlayerId
   | DeleteFail Http.RawError 
   | DeleteSuccess PlayerId
+  | CreatePlayerForm
+  | UpdateNewPlayer String
+  | CreateNewPlayer
+  | CreateNewPlayerSuccess Player
+  | CreateNewPlayerFail Http.Error
+

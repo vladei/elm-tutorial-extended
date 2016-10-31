@@ -12,6 +12,7 @@ view players =
     div []
         [ nav players
         , list players
+        , create
         ]
 
 
@@ -38,6 +39,19 @@ list players =
             ]
         ]
 
+create : Html Msg
+create =
+    div []
+        [createBtn]
+
+createBtn : Html Msg
+createBtn =
+    button
+        [ class "btn regular"
+        , onClick CreatePlayerForm
+        ]
+        [ i [ class "fa fa-pencil mr1" ] [], text "Create Player" ]
+
 
 playerRow : Player -> Html Msg
 playerRow player =
@@ -46,7 +60,7 @@ playerRow player =
         , td [] [ text player.name ]
         , td [] [ text (toString player.level) ]
         , td []
-            [ editBtn player, deletePlayerBtn player]
+            [ editBtn player, deletePlayerBtn player ]
         ]
 
 
@@ -57,6 +71,7 @@ editBtn player =
         , onClick (ShowPlayer player.id)
         ]
         [ i [ class "fa fa-pencil mr1" ] [], text "Edit" ]
+
 
 deletePlayerBtn : Player -> Html Msg
 deletePlayerBtn player =

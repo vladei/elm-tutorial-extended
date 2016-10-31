@@ -9,6 +9,7 @@ import Players.Models exposing (PlayerId)
 type Route
     = PlayersRoute
     | PlayerRoute PlayerId
+    | PlayerCreate
     | NotFoundRoute
 
 
@@ -18,6 +19,7 @@ matchers =
         [ format PlayersRoute (s "")
         , format PlayerRoute (s "players" </> int)
         , format PlayersRoute (s "players")
+        , format PlayerCreate (s "player" </> s "new")
         ]
 
 hashParser : Navigation.Location -> Result String Route
