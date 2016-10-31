@@ -49,14 +49,17 @@ update msg players newPlayer =
             (players, newPlayer, saveNewPlayerCommand newPlayer)
         
         CreateNewPlayerSuccess newPlayer ->
-            (addNewPlayerToList newPlayer players, generateNewPlayer, Cmd.none)
+            (addNewPlayerToList newPlayer players, generateNewPlayer, Navigation.newUrl "players")
         
         CreateNewPlayerFail err ->
             (players, newPlayer, Cmd.none)
 
 addNewPlayerToList : Player -> Players ->Players
 addNewPlayerToList newPlayer players =  
-    newPlayer :: players
+    let
+      allPlayers = newPlayer :: players
+    in
+      List.sortBy .id allPlayers
 
 
 saveNewPlayerCommand : NewPlayer -> Cmd Msg
