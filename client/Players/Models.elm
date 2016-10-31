@@ -12,7 +12,7 @@ type alias Player =
     }
 
 
-type alias NewPlayer =
+type alias PartialPlayer =
     { name : String
     , level : Int
     }
@@ -22,7 +22,7 @@ type alias Players =
     List Player
 
 
-generateNewPlayer : NewPlayer
+generateNewPlayer : PartialPlayer
 generateNewPlayer =
     { name = ""
     , level = 1

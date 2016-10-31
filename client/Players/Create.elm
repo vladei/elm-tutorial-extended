@@ -6,8 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import Players.Models exposing (..)
 import Players.Messages exposing (..)
 
-
-view : NewPlayer -> Html Msg
+view : PartialPlayer -> Html Msg
 view model =
     div []
         [ nav
@@ -20,7 +19,7 @@ nav =
         [ text "Players" ]
 
 
-form : NewPlayer -> Html Msg
+form : PartialPlayer -> Html Msg
 form model =
     div [ class "m3" ]
         [ h1 [] [ text "Create User" ]

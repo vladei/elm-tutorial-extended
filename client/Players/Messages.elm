@@ -8,6 +8,7 @@ type Msg
   = FetchAllDone Players
   | FetchAllFail Http.Error
   | ChangeLevel PlayerId Int
+  | ChangeName PlayerId String
   | SaveSuccess Player
   | SaveFail Http.Error
   | ShowPlayers
@@ -20,4 +21,6 @@ type Msg
   | CreateNewPlayer
   | CreateNewPlayerSuccess Player
   | CreateNewPlayerFail Http.Error
+  | UpdateFormName String
+  | ToggleEdit Player
 

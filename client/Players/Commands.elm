@@ -5,11 +5,11 @@ import Json.Encode as Encode
 import Json.Decode as Decode exposing ((:=))
 import Task exposing (..)
 
-import Players.Models exposing (PlayerId, Player, Players, NewPlayer)
+import Players.Models exposing (PlayerId, Player, Players, PartialPlayer)
 import Players.Messages exposing (..)
 
 
-create : NewPlayer -> Cmd Msg
+create : PartialPlayer -> Cmd Msg
 create newPlayer =
     createOnServer newPlayer
         |> Task.perform CreateNewPlayerFail CreateNewPlayerSuccess
@@ -31,7 +31,7 @@ delete player =
     deleteSingle player
         |> Task.perform DeleteFail DeleteSuccess
 
-createOnServer : NewPlayer -> Task.Task Http.Error Player
+createOnServer : PartialPlayer -> Task.Task Http.Error Player
 createOnServer newPlayer =
     let
         body =
@@ -97,7 +97,7 @@ collectionDecoder : Decode.Decoder Players
 collectionDecoder =
     Decode.list memberDecoder
 
-newPlayerEncoder : NewPlayer -> Encode.Value
+newPlayerEncoder : PartialPlayer -> Encode.Value
 newPlayerEncoder player =
     let
         list =

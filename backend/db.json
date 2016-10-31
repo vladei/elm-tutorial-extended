@@ -3,16 +3,16 @@
     {
       "id": 2,
       "name": "Ben",
-      "level": 1
+      "level": -9
     },
     {
       "id": 3,
-      "name": "Ben",
+      "name": "Tina",
       "level": 1
     },
     {
       "id": 4,
-      "name": "Ben",
+      "name": "Tim",
       "level": 1
     },
     {

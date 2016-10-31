@@ -10,7 +10,6 @@ import Players.List
 import Players.Edit
 import Players.Create
 
-
 view : Model -> Html Msg
 view model =
     div []
@@ -39,10 +38,12 @@ playersEditPage model playerId =
             model.players
                 |> List.filter (\player -> player.id == playerId)
                 |> List.head
+        currentEditing = model.editing
+        copyPlayer = model.newPlayer
     in
         case maybePlayer of
             Just player ->
-                Html.App.map PlayersMsg (Players.Edit.view player)
+                Html.App.map PlayersMsg (Players.Edit.view player copyPlayer currentEditing)
 
             Nothing ->
                 notFoundView
